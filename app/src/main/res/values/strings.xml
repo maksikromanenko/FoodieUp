@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">FoodieUp</string>
+    <string name="log_in">Log In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="log_in_underlined"><u>Log In</u></string>
+    <string name="sign_up_underlined"><u>Sign Up</u></string>
+    <string name="hint_login">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_password2">Confirm password</string>
+    <string name="main_menu">Главное меню</string>
+</resources>

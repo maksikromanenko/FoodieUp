@@ -63,7 +63,7 @@ class CreateOrderFragment : Fragment() {
             }
         }
 
-        updateOrderButton() // Set initial button state
+        updateOrderButton()
         fetchMenuItems(args.restaurantId)
     }
 

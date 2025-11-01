@@ -9,7 +9,7 @@
         android:icon="@drawable/ic_order_history"
         android:title="История" />
     <item
-        android:id="@+id/nav_cart"
+        android:id="@+id/nav_favorite"
         android:icon="@drawable/ic_favorite"
         android:title="Избранное" />
     <item

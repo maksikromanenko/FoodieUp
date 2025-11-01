@@ -6,6 +6,7 @@ import com.example.foodieup.data.model.ChangeAddressRequest
 import com.example.foodieup.data.model.CheckTokenRequest
 import com.example.foodieup.data.model.CheckTokenResponse
 import com.example.foodieup.data.model.CreateOrderRequest
+import com.example.foodieup.data.model.FavoriteRestaurant
 import com.example.foodieup.data.model.LoginRequest
 import com.example.foodieup.data.model.MenuItem
 import com.example.foodieup.data.model.Order
@@ -36,7 +37,7 @@ interface ApiService {
     @POST("/api/users/token/refresh/")
     suspend fun refreshToken(@Body request: RefreshTokenRequest): Response<RefreshTokenResponse>
 
-    @GET("/api/users/profile/")
+    @GET("/api/users/profile")
     suspend fun getProfile(@Header("Authorization") token: String): Response<User>
 
     @GET("/api/users/addresses/")
@@ -65,5 +66,8 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body orderRequest: CreateOrderRequest
     ): Response<Order>
+
+    @GET("api/favorite-restaurants/")
+    suspend fun getFavoriteRestaurants(@Header("Authorization") token: String): Response<List<FavoriteRestaurant>>
 
 }

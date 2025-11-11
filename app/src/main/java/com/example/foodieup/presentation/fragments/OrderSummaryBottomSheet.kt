@@ -12,6 +12,7 @@ import com.example.foodieup.R
 import com.example.foodieup.data.model.CreateOrderRequest
 import com.example.foodieup.data.model.MenuItem
 import com.example.foodieup.data.model.OrderItem
+import com.example.foodieup.data.network.WebSocketService
 import com.example.foodieup.data.network.RetrofitClient
 import com.example.foodieup.data.storage.TokenManager
 import com.example.foodieup.databinding.BottomSheetOrderSummaryBinding
@@ -61,9 +62,11 @@ class OrderSummaryBottomSheet : BottomSheetDialogFragment() {
 
     private fun createOrder() {
         lifecycleScope.launch {
+            binding.payButton.isEnabled = false
             val token = tokenManager.getAccessToken().first()
             if (token == null) {
                 Toast.makeText(requireContext(), "Authentication error", Toast.LENGTH_SHORT).show()
+                binding.payButton.isEnabled = true
                 return@launch
             }
 
@@ -71,12 +74,14 @@ class OrderSummaryBottomSheet : BottomSheetDialogFragment() {
                 val profileResponse = RetrofitClient.apiService.getProfile("Bearer $token")
                 if (!profileResponse.isSuccessful) {
                     Toast.makeText(requireContext(), "Failed to get user profile", Toast.LENGTH_SHORT).show()
+                    binding.payButton.isEnabled = true
                     return@launch
                 }
 
                 val addressId = profileResponse.body()?.addressid?.toIntOrNull()
                 if (addressId == null) {
                     Toast.makeText(requireContext(), "No address selected", Toast.LENGTH_SHORT).show()
+                    binding.payButton.isEnabled = true
                     return@launch
                 }
 
@@ -93,20 +98,31 @@ class OrderSummaryBottomSheet : BottomSheetDialogFragment() {
                 val createOrderResponse = RetrofitClient.apiService.createOrder("Bearer $token", orderRequest)
 
                 if (createOrderResponse.isSuccessful) {
-                    Toast.makeText(requireContext(), "Order created successfully!", Toast.LENGTH_LONG).show()
-                    findNavController().navigate(
-                        R.id.nav_home,
-                        null,
-                        NavOptions.Builder()
-                            .setPopUpTo(R.id.nav_graph, true)
-                            .build()
-                    )
+                    val orderId = createOrderResponse.body()?.id
+                    if (orderId != null) {
+                        WebSocketService.startTracking(orderId)
+                        Toast.makeText(requireContext(), "Заказ создан! Отслеживайте статус в истории.", Toast.LENGTH_LONG).show()
+                        findNavController().navigate(
+                            R.id.nav_home,
+                            null,
+                            NavOptions.Builder()
+                                .setPopUpTo(R.id.nav_graph, true) // Очищаем back stack до главного экрана
+                                .build()
+                        )
+                    } else {
+                        Toast.makeText(requireContext(), "Failed to get order ID", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
-                    Toast.makeText(requireContext(), "Failed to create order", Toast.LENGTH_SHORT).show()
+                    val errorBody = createOrderResponse.errorBody()?.string()
+                    Toast.makeText(requireContext(), "Failed to create order: $errorBody", Toast.LENGTH_SHORT).show()
                 }
 
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            } finally {
+                if (isAdded) {
+                    binding.payButton.isEnabled = true
+                }
             }
         }
     }

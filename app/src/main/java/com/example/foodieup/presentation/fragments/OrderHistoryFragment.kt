@@ -1,6 +1,7 @@
 package com.example.foodieup.presentation.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.foodieup.data.network.WebSocketService
 import com.example.foodieup.data.network.RetrofitClient
 import com.example.foodieup.data.storage.TokenManager
 import com.example.foodieup.databinding.FragmentOrderHistoryBinding
@@ -35,6 +37,14 @@ class OrderHistoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            WebSocketService.orderStatusUpdates.collect { statusUpdate ->
+                Log.d("OrderHistoryFragment", "Получено обновление статуса: $statusUpdate. Обновляю список заказов...")
+                fetchOrderHistory()
+            }
+        }
+
         fetchOrderHistory()
     }
 

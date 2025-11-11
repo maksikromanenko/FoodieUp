@@ -37,7 +37,7 @@ interface ApiService {
     @POST("/api/users/token/refresh/")
     suspend fun refreshToken(@Body request: RefreshTokenRequest): Response<RefreshTokenResponse>
 
-    @GET("/api/users/profile")
+    @GET("/api/users/profile/")
     suspend fun getProfile(@Header("Authorization") token: String): Response<User>
 
     @GET("/api/users/addresses/")

@@ -1,10 +1,12 @@
 package com.example.foodieup.presentation
 
+import android.animation.Animator
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.airbnb.lottie.LottieAnimationView
 import com.example.foodieup.R
 import com.example.foodieup.data.model.CheckTokenRequest
 import com.example.foodieup.data.model.RefreshTokenRequest
@@ -14,7 +16,6 @@ import com.example.foodieup.data.storage.TokenManager
 import com.example.foodieup.data.storage.UserManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -28,11 +29,26 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
         tokenManager = TokenManager(applicationContext)
-        lifecycleScope.launch {
-            val navigationActionDeferred = async { determineNavigationAction() }
-            delay(1000)
-            navigationActionDeferred.await()()
-        }
+
+        val navigationActionDeferred = lifecycleScope.async { determineNavigationAction() }
+
+        val animationView = findViewById<LottieAnimationView>(R.id.animation_view)
+        animationView.addAnimatorListener(object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator) {
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+                lifecycleScope.launch {
+                    navigationActionDeferred.await()()
+                }
+            }
+
+            override fun onAnimationCancel(animation: Animator) {
+            }
+
+            override fun onAnimationRepeat(animation: Animator) {
+            }
+        })
     }
 
     private suspend fun determineNavigationAction(): () -> Unit {

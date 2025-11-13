@@ -3,6 +3,7 @@
     <style name="Theme.FoodieUp" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/black</item>
         <item name="android:fontFamily">@font/auto</item>
+        <item name="colorControlHighlight">#40AE461E</item>
     </style>
 
 </resources>

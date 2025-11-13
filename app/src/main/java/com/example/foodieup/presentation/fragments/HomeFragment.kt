@@ -1,13 +1,15 @@
 package com.example.foodieup.presentation.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodieup.R
 import com.example.foodieup.data.model.Restaurant
@@ -33,6 +35,13 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        activity?.window?.let { window ->
+            val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+            insetsController?.isAppearanceLightStatusBars = true
+            window.statusBarColor = Color.WHITE
+            window.navigationBarColor = ContextCompat.getColor(requireContext(), R.color.orange)
+        }
+
         setupToolbar()
 
         binding.toolbar.setOnClickListener {
@@ -56,16 +65,18 @@ class HomeFragment : Fragment() {
             binding.popularRestaurantsRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             binding.popularRestaurantsRecycler.adapter = RestaurantAdapter(popularRestaurants, onRestaurantClick)
 
-            binding.offersRecycler.layoutManager = GridLayoutManager(context, 3)
-            binding.offersRecycler.adapter = RestaurantAdapter(restaurants.take(3), onRestaurantClick)
+            binding.offersRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            binding.offersRecycler.adapter = RestaurantAdapter(restaurants.shuffled().take(3), onRestaurantClick)
 
             binding.newItemsRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             binding.newItemsRecycler.adapter = RestaurantAdapter(restaurants.shuffled(), onRestaurantClick)
         } else {
             val dummyRestaurants = listOf(
-                Restaurant(id = -1, name = "Элемент", description = "", location = "", logoUrl = null, rating = 4.8),
-                Restaurant(id = -2, name = "Элемент", description = "", location = "", logoUrl = null, rating = 4.5),
-                Restaurant(id = -3, name = "Элемент", description = "", location = "", logoUrl = null, rating = 4.2)
+                Restaurant(id = -1, name = "Элемент 1", description = "", location = "", logoUrl = null, rating = 4.8),
+                Restaurant(id = -2, name = "Элемент 2", description = "", location = "", logoUrl = null, rating = 4.5),
+                Restaurant(id = -3, name = "Элемент 3", description = "", location = "", logoUrl = null, rating = 4.2),
+                Restaurant(id = -4, name = "Элемент 4", description = "", location = "", logoUrl = null, rating = 4.9),
+                Restaurant(id = -5, name = "Элемент 5", description = "", location = "", logoUrl = null, rating = 4.7)
             )
 
             val onDummyItemClick = { _: Restaurant -> }
@@ -73,8 +84,8 @@ class HomeFragment : Fragment() {
             binding.popularRestaurantsRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             binding.popularRestaurantsRecycler.adapter = RestaurantAdapter(dummyRestaurants, onDummyItemClick)
 
-            binding.offersRecycler.layoutManager = GridLayoutManager(context, 3)
-            binding.offersRecycler.adapter = RestaurantAdapter(dummyRestaurants, onDummyItemClick)
+            binding.offersRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            binding.offersRecycler.adapter = RestaurantAdapter(dummyRestaurants.take(3), onDummyItemClick)
 
             binding.newItemsRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             binding.newItemsRecycler.adapter = RestaurantAdapter(dummyRestaurants, onDummyItemClick)

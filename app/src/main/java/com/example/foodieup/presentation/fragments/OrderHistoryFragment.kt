@@ -1,15 +1,19 @@
 package com.example.foodieup.presentation.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.foodieup.R
 import com.example.foodieup.data.network.WebSocketService
 import com.example.foodieup.data.network.RetrofitClient
 import com.example.foodieup.data.storage.TokenManager
@@ -37,6 +41,13 @@ class OrderHistoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        activity?.window?.let { window ->
+            val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+            insetsController?.isAppearanceLightStatusBars = true
+            window.statusBarColor = Color.WHITE
+            window.navigationBarColor = ContextCompat.getColor(requireContext(), R.color.orange)
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             WebSocketService.orderStatusUpdates.collect { statusUpdate ->

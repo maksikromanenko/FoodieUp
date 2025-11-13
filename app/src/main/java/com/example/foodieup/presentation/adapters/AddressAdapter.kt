@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.foodieup.R
 import com.example.foodieup.data.model.Address
 import com.example.foodieup.data.storage.UserManager
 import com.example.foodieup.databinding.ItemAddressBinding
@@ -46,7 +47,11 @@ class AddressAdapter(
     class AddressViewHolder(private val binding: ItemAddressBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(address: Address, isSelected: Boolean) {
             binding.addressText.text = "${address.city}, ${address.location}"
-            binding.addressRadioButton.isChecked = isSelected
+            if (isSelected) {
+                binding.addressIcon.setImageResource(R.drawable.ic_checked_circle)
+            } else {
+                binding.addressIcon.setImageResource(R.drawable.ic_unchecked_circle)
+            }
         }
     }
 }

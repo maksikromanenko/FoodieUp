@@ -39,6 +39,10 @@ class AddressSelectionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.backButton.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
         val addresses = UserManager.userAddress
 
         if (!addresses.isNullOrEmpty()) {

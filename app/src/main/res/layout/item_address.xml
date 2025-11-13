@@ -4,27 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="12dp"
+    android:padding="16dp"
     android:gravity="center_vertical"
-    android:background="@drawable/white_rounded_background"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginTop="8dp">
+    android:background="@drawable/orange_rounded_background"
+    android:layout_marginBottom="8dp">
 
-    <RadioButton
-        android:id="@+id/address_radio_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="false" />
+    <ImageView
+        android:id="@+id/address_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        tools:src="@drawable/ic_checked_circle"/>
 
     <TextView
         android:id="@+id/address_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginStart="8dp"
-        android:textColor="@android:color/black"
+        android:layout_marginStart="16dp"
+        android:textColor="@android:color/white"
         android:textSize="16sp"
-        tools:text="адрес" />
+        android:textStyle="bold"
+        tools:text="Киевская 39к2Л" />
 
 </LinearLayout>

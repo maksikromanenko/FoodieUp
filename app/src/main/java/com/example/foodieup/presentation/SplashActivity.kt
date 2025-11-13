@@ -2,9 +2,11 @@ package com.example.foodieup.presentation
 
 import android.animation.Animator
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.airbnb.lottie.LottieAnimationView
 import com.example.foodieup.R
@@ -31,10 +33,19 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_splash)
+
+        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+        insetsController?.isAppearanceLightStatusBars = true
+        insetsController?.isAppearanceLightNavigationBars = true
+        window.statusBarColor = Color.TRANSPARENT
+        window.navigationBarColor = Color.TRANSPARENT
+
         tokenManager = TokenManager(applicationContext)
 
         val animationView = findViewById<LottieAnimationView>(R.id.animation_view)
+        animationView.speed = 1.5f
         animationView.addAnimatorListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator) {}
 

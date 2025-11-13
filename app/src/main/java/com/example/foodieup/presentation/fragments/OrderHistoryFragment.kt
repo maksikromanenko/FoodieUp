@@ -78,12 +78,10 @@ class OrderHistoryFragment : Fragment() {
                 } else {
                     binding.emptyText.isVisible = true
                     binding.emptyText.text = "Ошибка: ${response.code()}"
-                    Toast.makeText(context, "Ошибка загрузки: ${response.code()}", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 binding.emptyText.isVisible = true
-                binding.emptyText.text = "Сетевая ошибка"
-                Toast.makeText(context, "Сетевая ошибка: ${e.message}", Toast.LENGTH_SHORT).show()
+                binding.emptyText.text = "Не удалось загрузить историю.Сетевая ошибка"
             }
         }
     }

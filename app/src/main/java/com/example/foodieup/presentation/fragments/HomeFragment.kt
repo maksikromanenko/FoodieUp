@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodieup.R
+import com.example.foodieup.data.model.Restaurant
 import com.example.foodieup.data.storage.RestaurantManager
 import com.example.foodieup.data.storage.UserManager
 import com.example.foodieup.databinding.FragmentHomeBinding
@@ -45,16 +47,37 @@ class HomeFragment : Fragment() {
 
         if (!restaurants.isNullOrEmpty()) {
 
+            val onRestaurantClick = { restaurant: Restaurant ->
+                val bundle = bundleOf("restaurantId" to restaurant.id)
+                findNavController().navigate(R.id.action_nav_home_to_createOrderFragment, bundle)
+            }
+
+            val popularRestaurants = restaurants.sortedByDescending { it.rating }.take(8)
             binding.popularRestaurantsRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            binding.popularRestaurantsRecycler.adapter = RestaurantAdapter(restaurants)
+            binding.popularRestaurantsRecycler.adapter = RestaurantAdapter(popularRestaurants, onRestaurantClick)
 
             binding.offersRecycler.layoutManager = GridLayoutManager(context, 3)
-            binding.offersRecycler.adapter = RestaurantAdapter(restaurants.take(3))
+            binding.offersRecycler.adapter = RestaurantAdapter(restaurants.take(3), onRestaurantClick)
 
             binding.newItemsRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            binding.newItemsRecycler.adapter = RestaurantAdapter(restaurants.shuffled())
+            binding.newItemsRecycler.adapter = RestaurantAdapter(restaurants.shuffled(), onRestaurantClick)
         } else {
+            val dummyRestaurants = listOf(
+                Restaurant(id = -1, name = "Элемент", description = "", location = "", logoUrl = null, rating = 4.8),
+                Restaurant(id = -2, name = "Элемент", description = "", location = "", logoUrl = null, rating = 4.5),
+                Restaurant(id = -3, name = "Элемент", description = "", location = "", logoUrl = null, rating = 4.2)
+            )
 
+            val onDummyItemClick = { _: Restaurant -> }
+
+            binding.popularRestaurantsRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            binding.popularRestaurantsRecycler.adapter = RestaurantAdapter(dummyRestaurants, onDummyItemClick)
+
+            binding.offersRecycler.layoutManager = GridLayoutManager(context, 3)
+            binding.offersRecycler.adapter = RestaurantAdapter(dummyRestaurants, onDummyItemClick)
+
+            binding.newItemsRecycler.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            binding.newItemsRecycler.adapter = RestaurantAdapter(dummyRestaurants, onDummyItemClick)
         }
     }
 

@@ -9,11 +9,22 @@ import com.example.foodieup.R
 import com.example.foodieup.data.model.Restaurant
 import com.example.foodieup.databinding.ItemPopularRestaurantBinding
 
-class RestaurantAdapter(private val items: List<Restaurant>) : RecyclerView.Adapter<RestaurantAdapter.RestaurantViewHolder>() {
+class RestaurantAdapter(
+    private val items: List<Restaurant>,
+    private val onItemClick: (Restaurant) -> Unit
+) : RecyclerView.Adapter<RestaurantAdapter.RestaurantViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RestaurantViewHolder {
         val binding = ItemPopularRestaurantBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return RestaurantViewHolder(binding)
+        val holder = RestaurantViewHolder(binding)
+
+        holder.itemView.setOnClickListener {
+            val position = holder.adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                onItemClick(items[position])
+            }
+        }
+        return holder
     }
 
     override fun onBindViewHolder(holder: RestaurantViewHolder, position: Int) {

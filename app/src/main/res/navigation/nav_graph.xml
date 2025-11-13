@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_nav_home_to_addressSelectionFragment"
             app:destination="@id/addressSelectionFragment" />
+        <action
+            android:id="@+id/action_nav_home_to_createOrderFragment"
+            app:destination="@id/createOrderFragment" />
     </fragment>
 
     <fragment

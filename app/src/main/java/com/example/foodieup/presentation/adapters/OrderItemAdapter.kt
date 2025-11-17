@@ -1,6 +1,7 @@
 package com.example.foodieup.presentation.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -36,9 +37,18 @@ class OrderItemAdapter(
         fun bind(menuItem: MenuItem) {
             binding.itemName.text = menuItem.name
             binding.itemPrice.text = "${menuItem.price} BYN"
-            binding.quantityTextView.text = "0" // Default quantity
+            binding.quantityTextView.text = "0"
 
-            binding.placeholderLogo.visibility = android.view.View.GONE
+            if (menuItem.logoUrl != null) {
+                binding.itemLogo.visibility = View.GONE
+                Glide.with(binding.root.context)
+                    .load(menuItem.logoUrl)
+                    .centerCrop()
+                    .into(binding.itemLogo)
+            } else {
+                binding.itemLogo.visibility = View.VISIBLE
+                binding.itemLogo.setImageDrawable(null)
+            }
 
             var quantity = 0
 

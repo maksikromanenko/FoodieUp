@@ -9,5 +9,7 @@ data class MenuItem(
     val description: String?,
     val price: String,
     @SerializedName("is_available")
-    val isAvailable: Boolean
+    val isAvailable: Boolean,
+    @SerializedName("logo_url")
+    val logoUrl: String?,
 )

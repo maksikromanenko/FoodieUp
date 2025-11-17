@@ -3,9 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" 
+    android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="8dp">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -14,30 +15,49 @@
         <ImageView
             android:id="@+id/itemLogo"
             android:layout_width="0dp"
-            android:layout_height="120dp" 
-            android:background="#E0E0E0"
+            android:layout_height="120dp"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/placeholder_logo"
+            android:id="@+id/new_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ЛОГО"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="@+id/itemLogo"
-            app:layout_constraintEnd_toEndOf="@+id/itemLogo"
-            app:layout_constraintStart_toStartOf="@+id/itemLogo"
-            app:layout_constraintTop_toTopOf="@+id/itemLogo" />
+            android:layout_margin="8dp"
+            android:background="@drawable/new_tag_background_green"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:text="New"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/discount_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:background="@drawable/discount_tag_background"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="-20%" />
 
         <LinearLayout
             android:id="@+id/quantitySelector"
             android:layout_width="wrap_content"
-            android:layout_height="32dp" 
-            android:layout_margin="8dp" 
+            android:layout_height="32dp"
+            android:layout_margin="8dp"
             android:background="@drawable/quantity_background"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -74,27 +94,33 @@
             android:id="@+id/itemName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp" 
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:paddingBottom="4dp"
-            android:text=""
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            app:layout_constraintEnd_toStartOf="@+id/itemPrice"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/itemLogo" />
+            app:layout_constraintTop_toBottomOf="@+id/itemLogo"
+            tools:text="Название блюда" />
 
         <TextView
             android:id="@+id/itemPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp" 
-            android:layout_marginBottom="8dp"
-            android:text=""
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="12dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/itemName" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/itemName"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="10.99 BYN" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

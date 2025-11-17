@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.foodieup.data.model.MenuItem
 import com.example.foodieup.data.network.RetrofitClient
 import com.example.foodieup.data.storage.TokenManager
+import com.example.foodieup.data.storage.UserManager
 import com.example.foodieup.databinding.FragmentCreateOrderBinding
 import com.example.foodieup.presentation.adapters.OrderItemAdapter
 import kotlinx.coroutines.flow.first
@@ -46,6 +47,7 @@ class CreateOrderFragment : Fragment() {
 
         binding.restaurantName.text = args.restaurantName
 
+        checkIfFavorite()
         setupRecyclerView()
 
         binding.backButton.setOnClickListener {
@@ -65,6 +67,13 @@ class CreateOrderFragment : Fragment() {
 
         updateOrderButton()
         fetchMenuItems(args.restaurantId)
+    }
+
+    private fun checkIfFavorite() {
+        UserManager.favoriteRestaurants?.let { favorites ->
+            val isFavorite = favorites.any { it.id == args.restaurantId }
+            binding.favoriteButton.isSelected = isFavorite
+        }
     }
 
     private fun fetchMenuItems(restaurantId: Int) {

@@ -27,7 +27,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_margin="8dp"
-            android:background="@drawable/new_tag_background_yellow"
+            android:background="@drawable/new_tag_background_green"
             android:gravity="center_vertical"
             android:padding="6dp">
 

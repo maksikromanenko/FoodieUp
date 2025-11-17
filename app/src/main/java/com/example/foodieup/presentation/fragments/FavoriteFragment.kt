@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodieup.R
 import com.example.foodieup.data.network.RetrofitClient
 import com.example.foodieup.data.storage.TokenManager
+import com.example.foodieup.data.storage.UserManager
 import com.example.foodieup.databinding.FragmentFavoriteBinding
 import com.example.foodieup.presentation.adapters.FavoriteRestaurantAdapter
 import kotlinx.coroutines.flow.first
@@ -51,6 +52,7 @@ class FavoriteFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        displayFavorites()
         fetchFavoriteRestaurants()
     }
 
@@ -60,11 +62,22 @@ class FavoriteFragment : Fragment() {
         binding.favoriteRecyclerView.adapter = favoriteAdapter
     }
 
+    private fun displayFavorites() {
+        UserManager.favoriteRestaurants?.let {
+            if (it.isNotEmpty()) {
+                favoriteAdapter.updateRestaurants(it)
+                binding.favoriteRecyclerView.isVisible = true
+                binding.errorTextView.isVisible = false
+            } else {
+                binding.errorTextView.text = "Список избранного пуст"
+                binding.errorTextView.isVisible = true
+                binding.favoriteRecyclerView.isVisible = false
+            }
+        }
+    }
+
     private fun fetchFavoriteRestaurants() {
         lifecycleScope.launch {
-            binding.favoriteRecyclerView.isVisible = false
-            binding.errorTextView.isVisible = false
-
             val accessToken = tokenManager.getAccessToken().first()
             if (accessToken == null) {
                 Toast.makeText(context, "Ошибка аутентификации", Toast.LENGTH_SHORT).show()
@@ -78,13 +91,8 @@ class FavoriteFragment : Fragment() {
                 val response = RetrofitClient.apiService.getFavoriteRestaurants(authHeader)
                 if (response.isSuccessful) {
                     val favoriteRestaurants = response.body()
-                    if (!favoriteRestaurants.isNullOrEmpty()) {
-                        favoriteAdapter.updateRestaurants(favoriteRestaurants)
-                        binding.favoriteRecyclerView.isVisible = true
-                    } else {
-                        binding.errorTextView.text = "Список избранного пуст"
-                        binding.errorTextView.isVisible = true
-                    }
+                    UserManager.favoriteRestaurants = favoriteRestaurants
+                    displayFavorites()
                 } else {
                     binding.errorTextView.text = "Ошибка: ${response.code()}"
                     binding.errorTextView.isVisible = true

@@ -39,16 +39,11 @@ class OrderItemAdapter(
             binding.itemPrice.text = "${menuItem.price} BYN"
             binding.quantityTextView.text = "0"
 
-            if (menuItem.logoUrl != null) {
-                binding.itemLogo.visibility = View.GONE
-                Glide.with(binding.root.context)
-                    .load(menuItem.logoUrl)
-                    .centerCrop()
-                    .into(binding.itemLogo)
-            } else {
-                binding.itemLogo.visibility = View.VISIBLE
-                binding.itemLogo.setImageDrawable(null)
-            }
+            Glide.with(binding.root.context)
+                .load(menuItem.logoUrl)
+                .centerCrop()
+                .error(R.drawable.background_autori)
+                .into(binding.itemLogo)
 
             var quantity = 0
 

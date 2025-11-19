@@ -63,21 +63,6 @@ class RegActivity : AppCompatActivity() {
                                 UserManager.currentUser = authResponse.user
                                 Log.i(TAG, "Registration successful: ${authResponse.message}")
 
-
-                                try {
-                                    val addressResponse = RetrofitClient.apiService.getAddresses("Bearer ${authResponse.access}")
-                                    if (addressResponse.isSuccessful) {
-                                        val address = addressResponse.body()
-                                        UserManager.userAddress = address
-                                        Log.i(TAG, "Address fetched and saved successfully")
-                                    } else {
-                                        Log.e(TAG, "Failed to fetch address: ${addressResponse.errorBody()?.string()}")
-                                    }
-                                } catch (e: Exception) {
-                                    Log.e(TAG, "Error fetching address", e)
-                                }
-
-
                                 try {
                                     val restaurantsResponse = RetrofitClient.apiService.getRestaurants("Bearer ${authResponse.access}")
                                     if (restaurantsResponse.isSuccessful) {

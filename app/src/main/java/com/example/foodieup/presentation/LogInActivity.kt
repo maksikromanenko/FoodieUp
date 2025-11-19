@@ -84,6 +84,18 @@ class LogInActivity : AppCompatActivity() {
                                     Log.e(TAG, "Error fetching restaurants", e)
                                 }
 
+                                try {
+                                    val favoriteRestaurantsResponse = RetrofitClient.apiService.getFavoriteRestaurants("Bearer ${authResponse.access}")
+                                    if (favoriteRestaurantsResponse.isSuccessful) {
+                                        UserManager.favoriteRestaurants = favoriteRestaurantsResponse.body()
+                                        Log.i(TAG, "Favorite restaurants fetched successfully")
+                                    } else {
+                                        Log.e(TAG, "Failed to fetch favorite restaurants: ${favoriteRestaurantsResponse.errorBody()?.string()}")
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e(TAG, "Error fetching favorite restaurants", e)
+                                }
+
                                 Toast.makeText(this@LogInActivity, "Login Successful: ${authResponse.message}", Toast.LENGTH_LONG).show()
                                 val intent = Intent(this@LogInActivity, MainActivity::class.java)
                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

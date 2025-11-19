@@ -138,6 +138,14 @@ class SplashActivity : AppCompatActivity() {
                 Log.e(TAG, "Не удалось загрузить рестораны: ${restaurantsResponse.code()}")
                 return false
             }
+
+            val favoriteRestaurantsResponse = RetrofitClient.apiService.getFavoriteRestaurants(authHeader)
+            if (favoriteRestaurantsResponse.isSuccessful) {
+                UserManager.favoriteRestaurants = favoriteRestaurantsResponse.body()
+                Log.i(TAG, "Избранные рестораны успешно загружены")
+            } else {
+                Log.e(TAG, "Не удалось загрузить избранные рестораны: ${favoriteRestaurantsResponse.code()}")
+            }
             
             val addressResponse = RetrofitClient.apiService.getAddresses(authHeader)
             if (addressResponse.isSuccessful) {

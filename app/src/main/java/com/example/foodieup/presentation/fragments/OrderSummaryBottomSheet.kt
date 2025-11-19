@@ -106,7 +106,7 @@ class OrderSummaryBottomSheet : BottomSheetDialogFragment() {
                             R.id.nav_home,
                             null,
                             NavOptions.Builder()
-                                .setPopUpTo(R.id.nav_graph, true) // Очищаем back stack до главного экрана
+                                .setPopUpTo(R.id.nav_graph, true)
                                 .build()
                         )
                     } else {

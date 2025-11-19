@@ -1,6 +1,7 @@
 package com.example.foodieup.data.network
 
 import com.example.foodieup.data.model.Address
+import com.example.foodieup.data.model.AddFavoriteRequest
 import com.example.foodieup.data.model.AuthResponse
 import com.example.foodieup.data.model.ChangeAddressRequest
 import com.example.foodieup.data.model.CheckTokenRequest
@@ -17,6 +18,7 @@ import com.example.foodieup.data.model.Restaurant
 import com.example.foodieup.data.model.User
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
@@ -69,5 +71,17 @@ interface ApiService {
 
     @GET("api/favorite-restaurants/")
     suspend fun getFavoriteRestaurants(@Header("Authorization") token: String): Response<List<FavoriteRestaurant>>
+
+    @POST("api/favorite-restaurants/")
+    suspend fun addToFavorites(
+        @Header("Authorization") token: String,
+        @Body request: AddFavoriteRequest
+    ): Response<FavoriteRestaurant>
+
+    @DELETE("api/favorite-restaurants/{restaurantId}/")
+    suspend fun removeFromFavorites(
+        @Header("Authorization") token: String,
+        @Path("restaurantId") restaurantId: Int
+    ): Response<Unit>
 
 }

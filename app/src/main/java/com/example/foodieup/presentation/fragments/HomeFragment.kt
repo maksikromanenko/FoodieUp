@@ -57,7 +57,10 @@ class HomeFragment : Fragment() {
         if (!restaurants.isNullOrEmpty()) {
 
             val onRestaurantClick = { restaurant: Restaurant ->
-                val bundle = bundleOf("restaurantId" to restaurant.id)
+                val bundle = bundleOf(
+                    "restaurantId" to restaurant.id,
+                    "restaurantName" to restaurant.name
+                )
                 findNavController().navigate(R.id.action_nav_home_to_createOrderFragment, bundle)
             }
 

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/orange"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -12,9 +13,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
         android:text="Ваш заказ"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-        android:layout_marginBottom="16dp"/>
+        android:textColor="@android:color/white" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/summaryRecyclerView"
@@ -22,14 +24,17 @@
         android:layout_height="wrap_content"
         android:maxHeight="300dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/order_summary_item"
-        tools:itemCount="3"/>
+        tools:itemCount="3"
+        tools:listitem="@layout/order_summary_item" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/payButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:text="Оплатить"
+        app:backgroundTint="@android:color/white"
+        android:textColor="@color/orange"
         tools:text="" />
 
 </LinearLayout>

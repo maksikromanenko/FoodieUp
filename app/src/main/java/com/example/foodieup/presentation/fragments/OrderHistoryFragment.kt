@@ -81,7 +81,7 @@ class OrderHistoryFragment : Fragment() {
                     if (!orders.isNullOrEmpty()) {
                         binding.orderHistoryRecyclerView.isVisible = true
                         binding.orderHistoryRecyclerView.layoutManager = LinearLayoutManager(context)
-                        binding.orderHistoryRecyclerView.adapter = OrderHistoryAdapter(orders)
+                        binding.orderHistoryRecyclerView.adapter = OrderHistoryAdapter(orders.reversed())
                     } else {
                         binding.emptyText.isVisible = true
                         binding.emptyText.text = "История заказов пуста"

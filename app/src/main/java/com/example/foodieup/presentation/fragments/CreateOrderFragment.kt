@@ -77,7 +77,7 @@ class CreateOrderFragment : Fragment() {
 
     private fun checkIfFavorite() {
         UserManager.favoriteRestaurants?.let { favorites ->
-            val isFavorite = favorites.any { it.id == args.restaurantId }
+            val isFavorite = favorites.any { it.restaurant == args.restaurantId }
             binding.favoriteButton.isSelected = isFavorite
         }
     }
@@ -90,16 +90,19 @@ class CreateOrderFragment : Fragment() {
                 return@launch
             }
 
-            val isFavorite = binding.favoriteButton.isSelected
+            val isCurrentlyFavorite = binding.favoriteButton.isSelected
             val restaurantId = args.restaurantId
 
             try {
                 val authHeader = "Bearer $token"
-                if (isFavorite) {
-                    val response = RetrofitClient.apiService.removeFromFavorites(authHeader, restaurantId)
-                    if (response.isSuccessful) {
-                        binding.favoriteButton.isSelected = false
-                        UserManager.favoriteRestaurants = UserManager.favoriteRestaurants?.filterNot { it.id == restaurantId }
+                if (isCurrentlyFavorite) {
+                    val favoriteRestaurant = UserManager.favoriteRestaurants?.find { it.restaurant == restaurantId }
+                    if (favoriteRestaurant != null) {
+                        val response = RetrofitClient.apiService.removeFromFavorites(authHeader, favoriteRestaurant.id)
+                        if (response.isSuccessful) {
+                            binding.favoriteButton.isSelected = false
+                            UserManager.favoriteRestaurants = UserManager.favoriteRestaurants?.filterNot { it.id == favoriteRestaurant.id }
+                        }
                     }
                 } else {
                     val request = AddFavoriteRequest(restaurantId)

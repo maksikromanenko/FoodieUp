@@ -55,51 +55,45 @@ class LogInActivity : AppCompatActivity() {
                             val authResponse = response.body()
                             if (authResponse != null) {
                                 tokenManager.saveTokens(authResponse.access, authResponse.refresh)
-                                UserManager.currentUser = authResponse.user
-                                Log.i(TAG, "Login successful: ${authResponse.message}")
+                                val authHeader = "Bearer ${authResponse.access}"
 
-                                // Fetch address
-                                try {
-                                    val addressResponse = RetrofitClient.apiService.getAddresses("Bearer ${authResponse.access}")
-                                    if (addressResponse.isSuccessful) {
-                                        val address = addressResponse.body()
-                                        UserManager.userAddress = address
-                                        Log.i(TAG, "Address fetched and saved successfully")
-                                    } else {
-                                        Log.e(TAG, "Failed to fetch address: ${addressResponse.errorBody()?.string()}")
+                                val profileResponse = RetrofitClient.apiService.getProfile(authHeader)
+                                if (profileResponse.isSuccessful) {
+                                    val user = profileResponse.body()
+                                    UserManager.currentUser = user
+                                    if (user?.role == "customer") {
+                                        try {
+                                            val addressResponse = RetrofitClient.apiService.getAddresses(authHeader)
+                                            if (addressResponse.isSuccessful) {
+                                                UserManager.userAddress = addressResponse.body()
+                                                Log.i(TAG, "Address fetched and saved successfully")
+                                            }
+                                            val restaurantsResponse = RetrofitClient.apiService.getRestaurants(authHeader)
+                                            if (restaurantsResponse.isSuccessful) {
+                                                RestaurantManager.restaurants = restaurantsResponse.body()
+                                                Log.i(TAG, "Restaurants fetched successfully")
+                                            }
+                                            val favoriteRestaurantsResponse = RetrofitClient.apiService.getFavoriteRestaurants(authHeader)
+                                            if (favoriteRestaurantsResponse.isSuccessful) {
+                                                UserManager.favoriteRestaurants = favoriteRestaurantsResponse.body()
+                                                Log.i(TAG, "Favorite restaurants fetched successfully")
+                                            }
+                                        } catch (e: Exception) {
+                                            Log.e(TAG, "Error fetching customer data", e)
+                                        }
+                                        val intent = Intent(this@LogInActivity, MainActivity::class.java)
+                                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                        startActivity(intent)
+                                    } else if (user?.role == "courier") {
+                                        val intent = Intent(this@LogInActivity, CourierActivity::class.java)
+                                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                        startActivity(intent)
                                     }
-                                } catch (e: Exception) {
-                                    Log.e(TAG, "Error fetching address", e)
-                                }
 
-                                try {
-                                    val restaurantsResponse = RetrofitClient.apiService.getRestaurants("Bearer ${authResponse.access}")
-                                    if (restaurantsResponse.isSuccessful) {
-                                        RestaurantManager.restaurants = restaurantsResponse.body()
-                                        Log.i(TAG, "Restaurants fetched successfully")
-                                    } else {
-                                        Log.e(TAG, "Failed to fetch restaurants: ${restaurantsResponse.errorBody()?.string()}")
-                                    }
-                                } catch (e: Exception) {
-                                    Log.e(TAG, "Error fetching restaurants", e)
+                                    Toast.makeText(this@LogInActivity, "Login Successful: ${authResponse.message}", Toast.LENGTH_LONG).show()
+                                } else {
+                                    Log.e(TAG, "Failed to fetch profile: ${profileResponse.errorBody()?.string()}")
                                 }
-
-                                try {
-                                    val favoriteRestaurantsResponse = RetrofitClient.apiService.getFavoriteRestaurants("Bearer ${authResponse.access}")
-                                    if (favoriteRestaurantsResponse.isSuccessful) {
-                                        UserManager.favoriteRestaurants = favoriteRestaurantsResponse.body()
-                                        Log.i(TAG, "Favorite restaurants fetched successfully")
-                                    } else {
-                                        Log.e(TAG, "Failed to fetch favorite restaurants: ${favoriteRestaurantsResponse.errorBody()?.string()}")
-                                    }
-                                } catch (e: Exception) {
-                                    Log.e(TAG, "Error fetching favorite restaurants", e)
-                                }
-
-                                Toast.makeText(this@LogInActivity, "Login Successful: ${authResponse.message}", Toast.LENGTH_LONG).show()
-                                val intent = Intent(this@LogInActivity, MainActivity::class.java)
-                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                startActivity(intent)
                             } else {
                                 Log.e(TAG, "Login failed: Response body is null")
                                 Toast.makeText(this@LogInActivity, "Login failed: Empty response", Toast.LENGTH_LONG).show()

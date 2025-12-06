@@ -8,12 +8,20 @@ import com.example.foodieup.data.model.FavoriteRestaurant
 import com.example.foodieup.databinding.FavoriteItemBinding
 
 class FavoriteRestaurantAdapter(
-    private var restaurants: List<FavoriteRestaurant>
+    private var restaurants: List<FavoriteRestaurant>,
+    private val onItemClick: (FavoriteRestaurant) -> Unit
 ) : RecyclerView.Adapter<FavoriteRestaurantAdapter.FavoriteViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
         val binding = FavoriteItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return FavoriteViewHolder(binding)
+        val holder = FavoriteViewHolder(binding)
+        holder.itemView.setOnClickListener {
+            val position = holder.adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                onItemClick(restaurants[position])
+            }
+        }
+        return holder
     }
 
     override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {

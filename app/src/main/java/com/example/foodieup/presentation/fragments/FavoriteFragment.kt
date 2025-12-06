@@ -11,8 +11,10 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodieup.R
+import com.example.foodieup.data.model.FavoriteRestaurant
 import com.example.foodieup.data.network.RetrofitClient
 import com.example.foodieup.data.storage.TokenManager
 import com.example.foodieup.data.storage.UserManager
@@ -57,10 +59,21 @@ class FavoriteFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        favoriteAdapter = FavoriteRestaurantAdapter(emptyList())
+        favoriteAdapter = FavoriteRestaurantAdapter(emptyList()) { restaurant ->
+            onFavoriteRestaurantClick(restaurant)
+        }
         binding.favoriteRecyclerView.layoutManager = LinearLayoutManager(context)
         binding.favoriteRecyclerView.adapter = favoriteAdapter
     }
+
+    private fun onFavoriteRestaurantClick(restaurant: FavoriteRestaurant) {
+        val bundle = Bundle().apply {
+            putString("restaurantName", restaurant.restaurantName)
+            putInt("restaurantId", restaurant.restaurant)
+        }
+        findNavController().navigate(R.id.action_nav_favorite_to_createOrderFragment, bundle)
+    }
+
 
     private fun displayFavorites() {
         UserManager.favoriteRestaurants?.let {

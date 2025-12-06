@@ -51,7 +51,7 @@ class CreateOrderFragment : Fragment() {
 
         activity?.findViewById<BottomNavigationView>(R.id.bottom_navigation)?.visibility = View.GONE
 
-        binding.restaurantName.text = args.restaurantName
+        binding.restaurantName.text = args.restaurantName ?: "Ресторан"
 
         checkIfFavorite()
         setupRecyclerView()

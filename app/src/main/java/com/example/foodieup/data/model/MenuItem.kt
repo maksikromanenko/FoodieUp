@@ -12,4 +12,10 @@ data class MenuItem(
     val isAvailable: Boolean,
     @SerializedName("logo_url")
     val logoUrl: String?,
+    @SerializedName("discount_percentage")
+    val discountPercentage: Int?,
+    @SerializedName("final_price")
+    val finalPrice: String?,
+    @SerializedName("is_new")
+    val isNew: Boolean?
 )

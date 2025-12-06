@@ -2,7 +2,7 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="150dp"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardBackgroundColor="@android:color/white"
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/itemLogo"
+            android:id="@+id/menu_item_image"
             android:layout_width="0dp"
             android:layout_height="120dp"
             android:scaleType="centerCrop"
@@ -54,92 +54,53 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="-20%" />
 
-        <LinearLayout
-            android:id="@+id/quantitySelector"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:layout_margin="8dp"
-            android:background="@drawable/quantity_background"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
-            app:layout_constraintBottom_toBottomOf="@+id/itemLogo"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <ImageView
-                android:id="@+id/minusButton"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_remove" />
-
-            <TextView
-                android:id="@+id/quantityTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:text="0"
-                android:textColor="@android:color/black"
-                android:textSize="16sp" />
-
-            <ImageView
-                android:id="@+id/plusButton"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_add" />
-
-        </LinearLayout>
-
         <TextView
-            android:id="@+id/itemName"
+            android:id="@+id/menu_item_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="12dp"
-            android:layout_marginBottom="4dp"
             android:maxLines="2"
             android:ellipsize="end"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="@android:color/black"
-            android:textSize="16sp"
+            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/itemLogo"
-            app:layout_constraintBottom_toTopOf="@+id/price_layout"
-            app:layout_constraintVertical_bias="0.0"
-            tools:text="Название блюда" />
+            app:layout_constraintTop_toBottomOf="@+id/menu_item_image"
+            tools:text="Название продукта" />
 
         <LinearLayout
-            android:id="@+id/price_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="12dp"
             android:gravity="center_vertical|bottom"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/menu_item_name">
 
             <TextView
-                android:id="@+id/itemOriginalPrice"
+                android:id="@+id/menu_item_original_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:textColor="@android:color/darker_gray"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:visibility="gone"
                 tools:text="12.99 BYN" />
 
             <TextView
-                android:id="@+id/itemPrice"
+                android:id="@+id/menu_item_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 android:textColor="@android:color/black"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 tools:text="10.99 BYN" />
 

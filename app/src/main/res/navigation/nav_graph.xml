@@ -62,7 +62,8 @@
         tools:layout="@layout/fragment_create_order">
         <argument
             android:name="restaurantName"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true" />
         <argument
             android:name="restaurantId"
             app:argType="integer" />

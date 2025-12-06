@@ -1,5 +1,6 @@
 package com.example.foodieup.presentation.adapters
 
+import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,7 +37,32 @@ class OrderItemAdapter(
 
         fun bind(menuItem: MenuItem) {
             binding.itemName.text = menuItem.name
-            binding.itemPrice.text = "${menuItem.price} BYN"
+
+            if (menuItem.finalPrice != null && menuItem.price != menuItem.finalPrice) {
+
+                binding.itemOriginalPrice.visibility = View.VISIBLE
+                binding.itemOriginalPrice.text = "${menuItem.price} BYN"
+                binding.itemOriginalPrice.paintFlags = binding.itemOriginalPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+
+                binding.itemPrice.text = "${menuItem.finalPrice} BYN"
+            } else {
+                binding.itemOriginalPrice.visibility = View.GONE
+                binding.itemPrice.text = "${menuItem.price} BYN"
+            }
+
+            if (menuItem.isNew == true) {
+                binding.newTag.visibility = View.VISIBLE
+            } else {
+                binding.newTag.visibility = View.GONE
+            }
+
+            if (menuItem.discountPercentage != null && menuItem.discountPercentage > 0) {
+                binding.discountTag.visibility = View.VISIBLE
+                binding.discountTag.text = "-${menuItem.discountPercentage}%"
+            } else {
+                binding.discountTag.visibility = View.GONE
+            }
+
             binding.quantityTextView.text = "0"
 
             Glide.with(binding.root.context)

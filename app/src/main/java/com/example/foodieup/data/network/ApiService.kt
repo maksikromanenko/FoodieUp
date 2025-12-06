@@ -84,4 +84,10 @@ interface ApiService {
         @Path("restaurantId") restaurantId: Int
     ): Response<Unit>
 
+    @GET("/api/menu-items/new/")
+    suspend fun getNewMenuItems(@Header("Authorization") token: String): Response<List<MenuItem>>
+
+    @GET("/api/menu-items/sale/")
+    suspend fun getSaleMenuItems(@Header("Authorization") token: String): Response<List<MenuItem>>
+
 }

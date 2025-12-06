@@ -1,65 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="160dp"
+    android:layout_width="150dp"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_marginStart="0dp"
-    android:layout_marginEnd="8dp"
-    android:background="@drawable/white_rounded_background"
-    android:paddingBottom="12dp">
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp">
 
-    <RelativeLayout
-        android:layout_width="160dp"
-        android:layout_height="120dp">
-
-        <ImageView
-            android:id="@+id/restaurant_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/background_autori" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="8dp"
-            android:background="@drawable/new_tag_background_green"
-            android:gravity="center_vertical"
-            android:padding="6dp">
-
-            <ImageView
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:src="@android:drawable/btn_star"
-                app:tint="@android:color/white" />
-
-            <TextView
-                android:id="@+id/restaurant_rating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:text="5.0"
-                android:textColor="@android:color/white"
-                android:textSize="12sp" />
-        </LinearLayout>
-    </RelativeLayout>
-
-    <TextView
-        android:id="@+id/restaurant_name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="НАЗВАНИЕ"
-        android:gravity="center_horizontal"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        android:layout_marginTop="12dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:maxLines="1"
-        android:ellipsize="end"/>
+        android:orientation="vertical"
+        android:paddingBottom="12dp">
 
-</LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="120dp">
+
+            <ImageView
+                android:id="@+id/restaurant_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/background_autori" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="8dp"
+                android:background="@drawable/new_tag_background_green"
+                android:gravity="center_vertical"
+                android:padding="6dp">
+
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@android:drawable/btn_star"
+                    app:tint="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/restaurant_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="5.0"
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/restaurant_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
+            android:maxLines="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="НАЗВАНИЕ"
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

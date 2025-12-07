@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodieup.R
+import com.example.foodieup.data.model.AddAddressRequest
 import com.example.foodieup.data.model.ChangeAddressRequest
 import com.example.foodieup.data.network.RetrofitClient
 import com.example.foodieup.data.storage.TokenManager
@@ -72,7 +73,7 @@ class AddressSelectionFragment : Fragment() {
 
                         if (response.isSuccessful) {
 
-                            UserManager.currentUser = UserManager.currentUser?.copy(addressid = selectedAddress.id.toString())
+                            UserManager.currentUser = UserManager.currentUser?.copy(addressid = selectedAddress.id.toString()) // локально меняю адрес в меню
 
                             Toast.makeText(context, "Основной адрес изменен", Toast.LENGTH_SHORT).show()
                             findNavController().popBackStack()
@@ -101,9 +102,7 @@ class AddressSelectionFragment : Fragment() {
             addressAdapter = AddressAdapter(addresses)
             binding.addressesRecyclerView.layoutManager = LinearLayoutManager(context)
             binding.addressesRecyclerView.adapter = addressAdapter
-        } else {
-            Toast.makeText(context, "Список адресов пуст", Toast.LENGTH_LONG).show()
-        }
+        } 
     }
 
     private fun showAddNewAddressDialog() {
@@ -125,10 +124,35 @@ class AddressSelectionFragment : Fragment() {
             val postalCode = postalCodeEditText.text.toString()
 
             if (address.isNotEmpty() && city.isNotEmpty() && postalCode.isNotEmpty()) {
-                // TODO: Implement add new address API call
-                Toast.makeText(context, "Новый адрес сохранен (заглушка)", Toast.LENGTH_SHORT).show()
-                dialog.dismiss()
-                setupAddressList() 
+                lifecycleScope.launch {
+                    val accessToken = tokenManager.getAccessToken().first()
+                    if (accessToken == null) {
+                        Toast.makeText(context, "Ошибка аутентификации", Toast.LENGTH_SHORT).show()
+                        return@launch
+                    }
+
+                    try {
+                        val authHeader = "Bearer $accessToken"
+                        val newAddressRequest = AddAddressRequest(address, city, postalCode)
+                        val response = RetrofitClient.apiService.addAddress(authHeader, newAddressRequest)
+
+                        if (response.isSuccessful) {
+                            Toast.makeText(context, "Новый адрес добавлен", Toast.LENGTH_SHORT).show()
+                            dialog.dismiss()
+                            val addressesResponse = RetrofitClient.apiService.getAddresses(authHeader)
+                            if(addressesResponse.isSuccessful) {
+                                UserManager.userAddress = addressesResponse.body()
+                                setupAddressList()
+                            } else {
+                                Toast.makeText(context, "Не удалось обновить список адресов", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            Toast.makeText(context, "Ошибка: ${response.code()}", Toast.LENGTH_SHORT).show()
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(context, "Сетевая ошибка: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
             } else {
                 Toast.makeText(context, "Пожалуйста, заполните все поля", Toast.LENGTH_SHORT).show()
             }

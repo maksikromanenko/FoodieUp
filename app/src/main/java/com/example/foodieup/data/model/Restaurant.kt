@@ -6,7 +6,6 @@ data class Restaurant(
     val id: Int,
     val name: String,
     val description: String?,
-    val location: String?,
     @SerializedName("logo_url")
     val logoUrl: String?,
     val rating: Double?

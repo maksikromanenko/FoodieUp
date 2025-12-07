@@ -23,3 +23,7 @@ data class OrderItem(
     val menuItem: Int,
     val quantity: Int
 )
+
+data class UpdateOrderStatusRequest(
+    val status: String
+)

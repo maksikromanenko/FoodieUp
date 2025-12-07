@@ -12,6 +12,7 @@ import com.airbnb.lottie.LottieAnimationView
 import com.example.foodieup.R
 import com.example.foodieup.data.model.CheckTokenRequest
 import com.example.foodieup.data.model.RefreshTokenRequest
+import com.example.foodieup.data.model.User
 import com.example.foodieup.data.network.RetrofitClient
 import com.example.foodieup.data.storage.RestaurantManager
 import com.example.foodieup.data.storage.TokenManager
@@ -26,9 +27,10 @@ class SplashActivity : AppCompatActivity() {
     private lateinit var tokenManager: TokenManager
     private val TAG = "SplashActivity"
 
-    private enum class NavigationTarget {
-        MAIN_ACTIVITY,
-        LOGIN_ACTIVITY
+    private sealed class NavigationTarget {
+        data class Main(val user: User) : NavigationTarget()
+        data class Courier(val user: User) : NavigationTarget()
+        object Login : NavigationTarget()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,10 +53,10 @@ class SplashActivity : AppCompatActivity() {
 
             override fun onAnimationEnd(animation: Animator) {
                 lifecycleScope.launch {
-                    val destination = decideNextScreen()
-                    when (destination) {
-                        NavigationTarget.MAIN_ACTIVITY -> navigateToMain()
-                        NavigationTarget.LOGIN_ACTIVITY -> navigateToLogin()
+                    when (val destination = decideNextScreen()) {
+                        is NavigationTarget.Main -> navigateToMain(destination.user)
+                        is NavigationTarget.Courier -> navigateToCourier(destination.user)
+                        is NavigationTarget.Login -> navigateToLogin()
                     }
                 }
             }
@@ -69,102 +71,92 @@ class SplashActivity : AppCompatActivity() {
         val refreshToken = tokenManager.getRefreshToken().first()
 
         if (accessToken == null || refreshToken == null) {
-            Log.i(TAG, "Токены не найдены, переход на LogInActivity")
-            return NavigationTarget.LOGIN_ACTIVITY
+            return NavigationTarget.Login
         }
-        Log.d(TAG, "Токены найдены, проверка валидности...")
+
         return withContext(Dispatchers.IO) {
             try {
                 val response = RetrofitClient.apiService.checkTokens(CheckTokenRequest(accessToken, refreshToken))
                 if (!response.isSuccessful) {
-                    Log.e(TAG, "Запрос checkTokens завершился с ошибкой ${response.code()}, переход на Login.")
-                    return@withContext NavigationTarget.LOGIN_ACTIVITY
+                    return@withContext NavigationTarget.Login
                 }
+
                 val checkResponse = response.body()!!
                 var currentAccessToken = accessToken
 
-                if (!checkResponse.accessValid && checkResponse.refreshValid) {
-                    Log.i(TAG, "Access токен невалиден, refresh токен валиден. Обновление...")
-                    val refreshResponse = RetrofitClient.apiService.refreshToken(RefreshTokenRequest(refreshToken))
-                    if (refreshResponse.isSuccessful) {
-                        val newAccessToken = refreshResponse.body()!!.access
-                        tokenManager.saveTokens(newAccessToken, refreshToken)
-                        currentAccessToken = newAccessToken
-                        Log.i(TAG, "Токен успешно обновлен.")
+                if (!checkResponse.accessValid) {
+                    if (checkResponse.refreshValid) {
+                        val refreshResponse = RetrofitClient.apiService.refreshToken(RefreshTokenRequest(refreshToken))
+                        if (refreshResponse.isSuccessful) {
+                            val newAccessToken = refreshResponse.body()!!.access
+                            tokenManager.saveTokens(newAccessToken, refreshToken)
+                            currentAccessToken = newAccessToken
+                        } else {
+                            return@withContext NavigationTarget.Login
+                        }
                     } else {
-                        Log.e(TAG, "Не удалось обновить токен, код: ${refreshResponse.code()}. Переход на Login.")
-                        return@withContext NavigationTarget.LOGIN_ACTIVITY
+                        return@withContext NavigationTarget.Login
                     }
-                } else if (!checkResponse.accessValid && !checkResponse.refreshValid) {
-                    Log.i(TAG, "Оба токена невалидны. Переход на Login.")
-                    return@withContext NavigationTarget.LOGIN_ACTIVITY
                 }
 
-                Log.i(TAG, "Токен валиден. Загрузка начальных данных...")
-                val dataFetchedSuccessfully = fetchData(currentAccessToken)
-
-                if (dataFetchedSuccessfully) {
-                    Log.i(TAG, "Данные успешно загружены. Переход на MainActivity.")
-                    return@withContext NavigationTarget.MAIN_ACTIVITY
+                val authHeader = "Bearer $currentAccessToken"
+                val profileResponse = RetrofitClient.apiService.getProfile(authHeader)
+                if (profileResponse.isSuccessful) {
+                    val user = profileResponse.body()!!
+                    UserManager.currentUser = user
+                    when (user.role) {
+                        "customer" -> NavigationTarget.Main(user)
+                        "courier" -> NavigationTarget.Courier(user)
+                        else -> NavigationTarget.Login
+                    }
                 } else {
-                    Log.e(TAG, "Не удалось загрузить начальные данные. Переход на Login.")
-                    return@withContext NavigationTarget.LOGIN_ACTIVITY
+                    NavigationTarget.Login
                 }
-
             } catch (e: Exception) {
-                Log.e(TAG, "Произошла ошибка во время проверки токена или загрузки данных.", e)
-                return@withContext NavigationTarget.LOGIN_ACTIVITY
+                Log.e(TAG, "Error deciding next screen", e)
+                NavigationTarget.Login
             }
-        }
+        }!!
     }
 
-    private suspend fun fetchData(accessToken: String): Boolean {
-        val authHeader = "Bearer $accessToken"
-        try {
-            val profileResponse = RetrofitClient.apiService.getProfile(authHeader)
-            if (profileResponse.isSuccessful) {
-                UserManager.currentUser = profileResponse.body()
-                Log.i(TAG, "Профиль успешно загружен")
-            } else {
-                Log.e(TAG, "Не удалось загрузить профиль: ${profileResponse.code()}")
-                return false
-            }
-
-            val restaurantsResponse = RetrofitClient.apiService.getRestaurants(authHeader)
-            if (restaurantsResponse.isSuccessful) {
-                RestaurantManager.restaurants = restaurantsResponse.body()
-                Log.i(TAG, "Рестораны успешно загружены")
-            } else {
-                Log.e(TAG, "Не удалось загрузить рестораны: ${restaurantsResponse.code()}")
-                return false
-            }
-
-            val favoriteRestaurantsResponse = RetrofitClient.apiService.getFavoriteRestaurants(authHeader)
-            if (favoriteRestaurantsResponse.isSuccessful) {
-                UserManager.favoriteRestaurants = favoriteRestaurantsResponse.body()
-                Log.i(TAG, "Избранные рестораны успешно загружены")
-            } else {
-                Log.e(TAG, "Не удалось загрузить избранные рестораны: ${favoriteRestaurantsResponse.code()}")
-            }
-            
+    private suspend fun fetchCustomerData(authHeader: String): Boolean {
+        return try {
             val addressResponse = RetrofitClient.apiService.getAddresses(authHeader)
             if (addressResponse.isSuccessful) {
                 UserManager.userAddress = addressResponse.body()
-                Log.i(TAG, "Адреса успешно загружены и сохранены")
-            } else {
-                Log.e(TAG, "Не удалось загрузить адреса: ${addressResponse.code()}")
             }
-
-            return true
+            val restaurantsResponse = RetrofitClient.apiService.getRestaurants(authHeader)
+            if (restaurantsResponse.isSuccessful) {
+                RestaurantManager.restaurants = restaurantsResponse.body()
+            }
+            val favoriteRestaurantsResponse = RetrofitClient.apiService.getFavoriteRestaurants(authHeader)
+            if (favoriteRestaurantsResponse.isSuccessful) {
+                UserManager.favoriteRestaurants = favoriteRestaurantsResponse.body()
+            }
+            true
         } catch (e: Exception) {
-            Log.e(TAG, "Сетевая ошибка при загрузке данных", e)
-            return false
+            Log.e(TAG, "Error fetching customer data", e)
+            false
         }
     }
 
+    private fun navigateToMain(user: User) {
+        lifecycleScope.launch {
+            val token = tokenManager.getAccessToken().first()!!
+            val authHeader = "Bearer $token"
+            if (fetchCustomerData(authHeader)) {
+                val intent = Intent(this@SplashActivity, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            } else {
+                navigateToLogin()
+            }
+        }
+    }
 
-    private fun navigateToMain() {
-        val intent = Intent(this, MainActivity::class.java)
+    private fun navigateToCourier(user: User) {
+        val intent = Intent(this, CourierActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()

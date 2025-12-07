@@ -1,6 +1,7 @@
 package com.example.foodieup.data.network
 
 import com.example.foodieup.data.model.Address
+import com.example.foodieup.data.model.AddAddressRequest
 import com.example.foodieup.data.model.AddFavoriteRequest
 import com.example.foodieup.data.model.AuthResponse
 import com.example.foodieup.data.model.ChangeAddressRequest
@@ -15,6 +16,7 @@ import com.example.foodieup.data.model.RefreshTokenRequest
 import com.example.foodieup.data.model.RefreshTokenResponse
 import com.example.foodieup.data.model.RegisterRequest
 import com.example.foodieup.data.model.Restaurant
+import com.example.foodieup.data.model.UpdateOrderStatusRequest
 import com.example.foodieup.data.model.UpdateUserRequest
 import com.example.foodieup.data.model.User
 import retrofit2.Response
@@ -22,6 +24,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PUT
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -52,6 +55,12 @@ interface ApiService {
     @GET("/api/users/addresses/")
     suspend fun getAddresses(@Header("Authorization") token: String): Response<List<Address>>
 
+    @POST("/api/users/addresses/")
+    suspend fun addAddress(
+        @Header("Authorization") token: String,
+        @Body address: AddAddressRequest
+    ): Response<Address>
+
     @GET("/api/restaurants/")
     suspend fun getRestaurants(@Header("Authorization") token: String): Response<List<Restaurant>>
 
@@ -74,6 +83,13 @@ interface ApiService {
     suspend fun createOrder(
         @Header("Authorization") token: String,
         @Body orderRequest: CreateOrderRequest
+    ): Response<Order>
+
+    @PUT("/api/orders/{id}/status/")
+    suspend fun updateOrderStatus(
+        @Header("Authorization") token: String,
+        @Path("id") orderId: Int,
+        @Body request: UpdateOrderStatusRequest
     ): Response<Order>
 
     @GET("api/favorite-restaurants/")

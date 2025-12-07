@@ -39,11 +39,7 @@ class LogInActivity : AppCompatActivity() {
         button.setOnClickListener {
             val login = userLogin.text.toString().trim()
             val password = userPassword.text.toString().trim()
-            if(login == "admin" && password == "admin") {
-                val intent = Intent(this@LogInActivity, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-            }
+
             if (login.isNotEmpty() && password.isNotEmpty()) {
                 Log.i(TAG, "Login button clicked for user: $login")
                 val loginRequest = LoginRequest(username = login, password = password)
@@ -61,36 +57,21 @@ class LogInActivity : AppCompatActivity() {
                                 if (profileResponse.isSuccessful) {
                                     val user = profileResponse.body()
                                     UserManager.currentUser = user
-                                    if (user?.role == "customer") {
-                                        try {
-                                            val addressResponse = RetrofitClient.apiService.getAddresses(authHeader)
-                                            if (addressResponse.isSuccessful) {
-                                                UserManager.userAddress = addressResponse.body()
-                                                Log.i(TAG, "Address fetched and saved successfully")
-                                            }
-                                            val restaurantsResponse = RetrofitClient.apiService.getRestaurants(authHeader)
-                                            if (restaurantsResponse.isSuccessful) {
-                                                RestaurantManager.restaurants = restaurantsResponse.body()
-                                                Log.i(TAG, "Restaurants fetched successfully")
-                                            }
-                                            val favoriteRestaurantsResponse = RetrofitClient.apiService.getFavoriteRestaurants(authHeader)
-                                            if (favoriteRestaurantsResponse.isSuccessful) {
-                                                UserManager.favoriteRestaurants = favoriteRestaurantsResponse.body()
-                                                Log.i(TAG, "Favorite restaurants fetched successfully")
-                                            }
-                                        } catch (e: Exception) {
-                                            Log.e(TAG, "Error fetching customer data", e)
-                                        }
-                                        val intent = Intent(this@LogInActivity, MainActivity::class.java)
-                                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                        startActivity(intent)
-                                    } else if (user?.role == "courier") {
-                                        val intent = Intent(this@LogInActivity, CourierActivity::class.java)
-                                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                        startActivity(intent)
-                                    }
-
                                     Toast.makeText(this@LogInActivity, "Login Successful: ${authResponse.message}", Toast.LENGTH_LONG).show()
+
+                                    when (user?.role) {
+                                        "customer" -> {
+                                            fetchCustomerDataAndNavigate(authHeader)
+                                        }
+                                        "courier" -> {
+                                            val intent = Intent(this@LogInActivity, CourierActivity::class.java)
+                                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                            startActivity(intent)
+                                        }
+                                        else -> {
+                                            Toast.makeText(this@LogInActivity, "Unknown user role", Toast.LENGTH_LONG).show()
+                                        }
+                                    }
                                 } else {
                                     Log.e(TAG, "Failed to fetch profile: ${profileResponse.errorBody()?.string()}")
                                 }
@@ -121,5 +102,30 @@ class LogInActivity : AppCompatActivity() {
             val intent = Intent(this, RegActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private suspend fun fetchCustomerDataAndNavigate(authHeader: String) {
+        try {
+            val addressResponse = RetrofitClient.apiService.getAddresses(authHeader)
+            if (addressResponse.isSuccessful) {
+                UserManager.userAddress = addressResponse.body()
+                Log.i(TAG, "Address fetched and saved successfully")
+            }
+            val restaurantsResponse = RetrofitClient.apiService.getRestaurants(authHeader)
+            if (restaurantsResponse.isSuccessful) {
+                RestaurantManager.restaurants = restaurantsResponse.body()
+                Log.i(TAG, "Restaurants fetched successfully")
+            }
+            val favoriteRestaurantsResponse = RetrofitClient.apiService.getFavoriteRestaurants(authHeader)
+            if (favoriteRestaurantsResponse.isSuccessful) {
+                UserManager.favoriteRestaurants = favoriteRestaurantsResponse.body()
+                Log.i(TAG, "Favorite restaurants fetched successfully")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching customer data", e)
+        }
+        val intent = Intent(this@LogInActivity, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
     }
 }

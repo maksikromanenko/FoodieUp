@@ -85,8 +85,8 @@ class HomeFragment : Fragment() {
             binding.popularRestaurantsRecycler.adapter = RestaurantAdapter(popularRestaurants, onRestaurantClick)
         } else {
             val dummyRestaurants = listOf(
-                Restaurant(id = -1, name = "Элемент 1", description = "", location = "", logoUrl = null, rating = 4.8),
-                Restaurant(id = -2, name = "Элемент 2", description = "", location = "", logoUrl = null, rating = 4.5),
+                Restaurant(id = -1, name = "Элемент 1", description = "", logoUrl = null, rating = 4.8),
+                Restaurant(id = -2, name = "Элемент 2", description = "", logoUrl = null, rating = 4.5),
             )
 
             val onDummyItemClick = { _: Restaurant -> }
@@ -111,7 +111,7 @@ class HomeFragment : Fragment() {
             binding.toolbarTitle.text = primaryAddress.addressLine
         } else if (!addresses.isNullOrEmpty()) {
             val firstAddress = addresses[0]
-            binding.toolbarTitle.text = "${firstAddress.city}, ${firstAddress.location}"
+            binding.toolbarTitle.text = "${firstAddress.addressLine}"
         } else {
             binding.toolbarTitle.text = "Нет адреса"
         }

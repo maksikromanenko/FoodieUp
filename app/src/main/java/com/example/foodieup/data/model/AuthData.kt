@@ -42,8 +42,15 @@ data class Address(
     val addressLine: String,
     val city: String,
     @SerializedName("postal_code")
-    val postalCode: String,
-    val location: String
+    val postalCode: String
+)
+
+data class AddAddressRequest(
+    @SerializedName("address_line")
+    val addressLine: String,
+    val city: String,
+    @SerializedName("postal_code")
+    val postalCode: String
 )
 
 data class ChangeAddressRequest(

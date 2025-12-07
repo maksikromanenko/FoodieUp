@@ -9,6 +9,7 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
+import org.json.JSONObject
 
 object WebSocketService {
 
@@ -43,7 +44,15 @@ object WebSocketService {
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             Log.d(TAG, "Получено сообщение: $text")
-            _orderStatusUpdates.tryEmit(text)
+            try {
+                val jsonObject = JSONObject(text)
+                val message = jsonObject.getString("message")
+                _orderStatusUpdates.tryEmit(message)
+                stopTracking()
+            } catch (e: Exception) {
+                Log.e(TAG, "Ошибка парсинга JSON: $text", e)
+                _orderStatusUpdates.tryEmit(text)
+            }
         }
 
         override fun onMessage(webSocket: WebSocket, bytes: ByteString) {

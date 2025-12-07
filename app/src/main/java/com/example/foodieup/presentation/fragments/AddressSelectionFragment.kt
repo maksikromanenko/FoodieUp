@@ -1,14 +1,18 @@
 package com.example.foodieup.presentation.fragments
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.foodieup.R
 import com.example.foodieup.data.model.ChangeAddressRequest
 import com.example.foodieup.data.network.RetrofitClient
 import com.example.foodieup.data.storage.TokenManager
@@ -43,15 +47,7 @@ class AddressSelectionFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-        val addresses = UserManager.userAddress
-
-        if (!addresses.isNullOrEmpty()) {
-            addressAdapter = AddressAdapter(addresses)
-            binding.addressesRecyclerView.layoutManager = LinearLayoutManager(context)
-            binding.addressesRecyclerView.adapter = addressAdapter
-        } else {
-            Toast.makeText(context, "Список адресов пуст", Toast.LENGTH_LONG).show()
-        }
+        setupAddressList()
 
         binding.saveButton.setOnClickListener {
             if (!::addressAdapter.isInitialized) {
@@ -94,8 +90,51 @@ class AddressSelectionFragment : Fragment() {
         }
 
         binding.addNewAddressButton.setOnClickListener {
-            Toast.makeText(context, "Add new address clicked", Toast.LENGTH_SHORT).show()
+            showAddNewAddressDialog()
         }
+    }
+
+    private fun setupAddressList() {
+        val addresses = UserManager.userAddress
+
+        if (!addresses.isNullOrEmpty()) {
+            addressAdapter = AddressAdapter(addresses)
+            binding.addressesRecyclerView.layoutManager = LinearLayoutManager(context)
+            binding.addressesRecyclerView.adapter = addressAdapter
+        } else {
+            Toast.makeText(context, "Список адресов пуст", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun showAddNewAddressDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        val inflater = requireActivity().layoutInflater
+        val dialogView = inflater.inflate(R.layout.dialog_add_new_address, null)
+        builder.setView(dialogView)
+
+        val addressEditText = dialogView.findViewById<EditText>(R.id.addressEditText)
+        val cityEditText = dialogView.findViewById<EditText>(R.id.cityEditText)
+        val postalCodeEditText = dialogView.findViewById<EditText>(R.id.postalCodeEditText)
+        val saveAddressButton = dialogView.findViewById<Button>(R.id.saveAddressButton)
+
+        val dialog = builder.create()
+
+        saveAddressButton.setOnClickListener {
+            val address = addressEditText.text.toString()
+            val city = cityEditText.text.toString()
+            val postalCode = postalCodeEditText.text.toString()
+
+            if (address.isNotEmpty() && city.isNotEmpty() && postalCode.isNotEmpty()) {
+                // TODO: Implement add new address API call
+                Toast.makeText(context, "Новый адрес сохранен (заглушка)", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+                setupAddressList() 
+            } else {
+                Toast.makeText(context, "Пожалуйста, заполните все поля", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        dialog.show()
     }
 
     override fun onDestroyView() {

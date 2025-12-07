@@ -3,4 +3,6 @@
     <string name="main_menu">Главное меню</string>
     <string name="sign_up_underlined_ru"><u>Зарегистрируйся</u></string>
     <string name="log_in_underlined_ru"><u>Войти</u></string>
+    <string name="logout">Logout</string>
+    <string name="profile_image">Profile Image</string>
 </resources>

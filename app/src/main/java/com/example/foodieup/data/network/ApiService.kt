@@ -15,6 +15,7 @@ import com.example.foodieup.data.model.RefreshTokenRequest
 import com.example.foodieup.data.model.RefreshTokenResponse
 import com.example.foodieup.data.model.RegisterRequest
 import com.example.foodieup.data.model.Restaurant
+import com.example.foodieup.data.model.UpdateUserRequest
 import com.example.foodieup.data.model.User
 import retrofit2.Response
 import retrofit2.http.Body
@@ -41,6 +42,12 @@ interface ApiService {
 
     @GET("/api/users/profile/")
     suspend fun getProfile(@Header("Authorization") token: String): Response<User>
+
+    @PATCH("/api/users/profile/")
+    suspend fun updateProfile(
+        @Header("Authorization") token: String,
+        @Body request: UpdateUserRequest
+    ): Response<User>
 
     @GET("/api/users/addresses/")
     suspend fun getAddresses(@Header("Authorization") token: String): Response<List<Address>>

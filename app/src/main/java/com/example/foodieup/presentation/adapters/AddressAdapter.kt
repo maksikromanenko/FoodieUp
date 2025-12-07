@@ -46,7 +46,7 @@ class AddressAdapter(
 
     class AddressViewHolder(private val binding: ItemAddressBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(address: Address, isSelected: Boolean) {
-            binding.addressText.text = "${address.city}, ${address.location}"
+            binding.addressText.text = "${address.city}, ${address.addressLine}"
             if (isSelected) {
                 binding.addressIcon.setImageResource(R.drawable.ic_checked_circle)
             } else {

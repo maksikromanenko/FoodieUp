@@ -1,6 +1,8 @@
 package com.example.foodieup.data.network
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import okhttp3.OkHttpClient
@@ -16,9 +18,14 @@ object WebSocketService {
     private const val TAG = "WebSocketService"
     private val client = OkHttpClient()
     private var webSocket: WebSocket? = null
+    private var appContext: Context? = null
 
     private val _orderStatusUpdates = MutableSharedFlow<String>()
     val orderStatusUpdates = _orderStatusUpdates.asSharedFlow()
+
+    fun init(context: Context) {
+        appContext = context.applicationContext
+    }
 
     fun startTracking(orderId: Int) {
         stopTracking()
@@ -48,10 +55,12 @@ object WebSocketService {
                 val jsonObject = JSONObject(text)
                 val message = jsonObject.getString("message")
                 _orderStatusUpdates.tryEmit(message)
+                appContext?.let { Toast.makeText(it, message, Toast.LENGTH_SHORT).show() }
                 stopTracking()
             } catch (e: Exception) {
                 Log.e(TAG, "Ошибка парсинга JSON: $text", e)
                 _orderStatusUpdates.tryEmit(text)
+                appContext?.let { Toast.makeText(it, text, Toast.LENGTH_SHORT).show() }
             }
         }
 

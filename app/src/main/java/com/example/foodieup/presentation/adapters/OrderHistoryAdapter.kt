@@ -24,7 +24,7 @@ class OrderHistoryAdapter(private val items: List<Order>) : RecyclerView.Adapter
     class OrderHistoryViewHolder(private val binding: ItemOrderHistoryBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(order: Order) {
             binding.restaurantNameText.text = order.restaurantName
-            binding.totalPriceText.text = "Total: ${order.totalPrice}$"
+            binding.totalPriceText.text = "Total: ${order.totalPrice}BYN"
 
             binding.statusText.text = if (!order.status.isNullOrBlank()) {
                 "Status: ${order.status}"

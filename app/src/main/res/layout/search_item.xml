@@ -26,6 +26,7 @@
             android:id="@+id/restaurant_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
             android:textAppearance="?attr/textAppearanceHeadline6"
             tools:text="название" />
 

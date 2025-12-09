@@ -86,6 +86,7 @@ class ProfileFragment : Fragment() {
     private fun setupProfileData(user: User) {
         binding.firstNameEditText.setText(user.firstName)
         binding.lastNameEditText.setText(user.lastName)
+        binding.emailEditText.setText(user.email)
 
         if (!user.firstName.isNullOrEmpty()) {
             binding.firstNameEditText.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black))
@@ -93,11 +94,15 @@ class ProfileFragment : Fragment() {
         if (!user.lastName.isNullOrEmpty()) {
             binding.lastNameEditText.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black))
         }
+        if (!user.email.isNullOrEmpty()) {
+            binding.emailEditText.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black))
+        }
     }
 
     private fun enableEditMode() {
         binding.firstNameEditText.isEnabled = true
         binding.lastNameEditText.isEnabled = true
+        binding.emailEditText.isEnabled = true
         binding.editSaveButton.text = "Сохранить"
     }
 
@@ -107,7 +112,8 @@ class ProfileFragment : Fragment() {
             if (token != null) {
                 val firstName = binding.firstNameEditText.text.toString()
                 val lastName = binding.lastNameEditText.text.toString()
-                val request = UpdateUserRequest(firstName, lastName)
+                val email = binding.emailEditText.text.toString()
+                val request = UpdateUserRequest(firstName, lastName, email)
                 try {
                     val response = apiService.updateProfile("Bearer $token", request)
                     if (response.isSuccessful) {
@@ -126,6 +132,7 @@ class ProfileFragment : Fragment() {
     private fun disableEditMode() {
         binding.firstNameEditText.isEnabled = false
         binding.lastNameEditText.isEnabled = false
+        binding.emailEditText.isEnabled = false
         binding.editSaveButton.text = "Изменить"
     }
 

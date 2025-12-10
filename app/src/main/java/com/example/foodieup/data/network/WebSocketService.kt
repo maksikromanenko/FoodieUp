@@ -3,8 +3,12 @@ package com.example.foodieup.data.network
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -19,6 +23,7 @@ object WebSocketService {
     private val client = OkHttpClient()
     private var webSocket: WebSocket? = null
     private var appContext: Context? = null
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     private val _orderStatusUpdates = MutableSharedFlow<String>()
     val orderStatusUpdates = _orderStatusUpdates.asSharedFlow()
@@ -55,17 +60,17 @@ object WebSocketService {
                 val jsonObject = JSONObject(text)
                 val message = jsonObject.getString("message")
                 _orderStatusUpdates.tryEmit(message)
-                appContext?.let { Toast.makeText(it, message, Toast.LENGTH_SHORT).show() }
+                scope.launch {
+                    appContext?.let { Toast.makeText(it, message, Toast.LENGTH_SHORT).show() }
+                }
                 stopTracking()
             } catch (e: Exception) {
                 Log.e(TAG, "Ошибка парсинга JSON: $text", e)
                 _orderStatusUpdates.tryEmit(text)
-                appContext?.let { Toast.makeText(it, text, Toast.LENGTH_SHORT).show() }
+                scope.launch {
+                    appContext?.let { Toast.makeText(it, text, Toast.LENGTH_SHORT).show() }
+                }
             }
-        }
-
-        override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
-            Log.d(TAG, "Получены байты: ${bytes.hex()}")
         }
 
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
